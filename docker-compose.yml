@@ -1,0 +1,70 @@
+version: '2.1'
+
+services:
+  # Based on https://realpython.com/blog/python/django-development-with-docker-compose-and-machine/
+  # If restart: always is enabled it will run even if the machine is restarted.
+  # Docker container ports do not interfere with the host ports
+
+  chordifyme_postgis:
+    restart: always
+    image: mdillon/postgis:9.6-alpine
+    volumes:
+      - ./chordifyme_data:/var/lib/postgresql/data
+      - ./logs/postgresql:/var/log/postgresql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "postgres"
+
+  chordifyme_redis:
+    restart: always
+    image: redis:3.2.11-alpine
+    volumes:
+      - ./logs/redis:/var/log/redis
+
+  chordifyme_web:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./compose/django/production/Dockerfile
+    command: /gunicorn.sh
+    volumes:
+      - ./media:/code/media
+      - ./staticfiles:/code/staticfiles
+      - ./chordifyme_management:/code/chordifyme_management
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
+    depends_on:
+      - chordifyme_postgis
+      - chordifyme_redis
+    env_file: .env
+
+  chordifyme_nginx:
+    restart: always
+    build: ./compose/nginx/production
+    depends_on:
+      - chordifyme_web
+    volumes:
+      - ./media:/code/media
+      - ./staticfiles:/code/staticfiles
+      - ./logs/nginx:/var/log/nginx
+      - ./chordifyme_https_certs:/etc/letsencrypt
+    ports:
+      - "127.0.0.1:9011:80"
+      - "127.0.0.1:9012:443"
+
+  chordifyme_certbot:
+    restart: always
+    build: ./compose/certbot/production
+    volumes:
+      - ./chordifyme_https_certs:/etc/letsencrypt
+      - ./staticfiles:/code/staticfiles
+    depends_on:
+      - chordifyme_nginx
+      - chordifyme_web
+
+volumes:
+  chordifyme_data:
+  chordifyme_https_certs:

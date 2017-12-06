@@ -1,0 +1,74 @@
+html, body 
+{ 
+    height: 100%;
+    width: 100%;
+    max-width: 100%;
+    font-family: Droid Sans;
+    background-color: #fdfdfd;
+}
+
+strong {font-weight:bold;}
+
+.navbar {
+}
+    .navbar.navbar-light .nav-item a, .navbar-brand {
+        color: #fff !important;
+    }
+    .collapsible-navbar {
+        margin-top: 0 !important;
+    }
+    .collapsible-navbar .nav-item {
+        padding: 20px;
+    }
+    .collapsible-navbar .nav-item a {
+        color: #fff !important;
+    }
+
+.footer {
+    background-color: #fdfdfd;
+    width: 100%;
+    height: auto;
+    line-height: 80px;
+}
+    .footer a {
+        font-size: 36px;
+        padding: 0px 20px;
+        color: #5c5b5e;
+    }
+
+.jumbotron {
+    margin-top: 30px;
+}
+
+.horizontal-align {
+    text-align: center;
+}
+
+.block {
+  width: 100px;
+  display: inline-block;
+}​
+
+.finger_form {
+    visibility: hidden;
+}
+
+.strings .md-form, .strings input[type=number] {
+    margin-bottom: 0 !important;
+}
+
+.advanced .row {
+    margin: 20px 0px;
+}
+
+.vertical-align {
+    display: flex;
+    align-items: center;
+}
+
+.breadcrumb {
+    background-color: #fdfdfd;
+}
+.display-5 {
+    padding: 40px 0px;
+}

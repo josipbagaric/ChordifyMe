@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+
+    <h1 class="display-5">Chord Image Generator</h1>
+    <p class="lead">Type the chord in the form of a tabulature and see the results immediately!</p>
+      
+    <hr class="my-4">
+
+    <div class="row">
+      <div class="col-md-4">
+
+        <form action="/" method="post">
+          {% csrf_token %}
+          
+          <div class="strings">
+          {% for string in strings %}
+
+            <div class="row">
+                <div class="col-xs-6 col-md-6">
+                  <div class="md-form">
+                    <i class="fa prefix">{{string.0}}</i>
+                    <input type="number" class="form-control fret" width="10" name="{{string.0}}" id="{{string.0}}" min="0" max="24" value="{{string.1.fret}}" placeholder="Fret #">
+                  </div>
+                </div>
+
+                <div class="col-xs-6 col-md-6">
+                  <div class="md-form finger_form" id="{{string.0}}_finger_form">
+                    <input type="number" class="form-control" width="10" name="{{string.0}}_finger" id="{{string.0}}_finger" min="1" max="4" value="{{string.1.finger}}" placeholder="Finger #">
+                  </div>
+                </div>
+            </div>
+          {% endfor %}
+          </div>
+
+          <div class="row horizontal-align" style="margin-top: 20px;">
+            <div class="col-md-12">
+              <button type="submit" class="btn btn-primary btn-lg">Generate</button>
+            </div>
+          </div>
+
+          <div class="row horizontal-align">
+            <div class="col-md-12">
+              <button class="btn btn-outline-primary waves-effect" type="button" data-toggle="collapse" data-target="#advancedOptions" aria-expanded="false" aria-controls="advancedOptions">
+                Advanced
+              </button>
+            </div>
+          </div>
+
+          <div class="collapse advanced" id="advancedOptions">
+
+            <div class="row">
+              <div class="col-md-12">
+                <label for="chord_name">Chord name:</label>
+                <input type="text" name="name" id="chord_name" placeholder="(Optional)" maxlength="20" value="{{chord_name}}" style="width: 200px;">
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-inline">
+                  <fieldset class="form-group">
+                    <label for="guess_chord_name">Guess chord name:</label>
+                    <input type="checkbox" name="guess" id="guess_chord_name" disabled>
+                  </fieldset>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-12">
+                <label>Instrument:</label>
+                <select>
+                  {% for instrument in instruments %}
+                    <option value="{{instrument}}">{{instrument}}</option>
+                  {% endfor %}
+                  <option disabled>More instruments coming soon...</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-12">
+                <label for="capo">Capo position:</label>
+                <input type="number" name="capo" id="capo" placeholder="0" min="0" max="15" value="{{capo}}" style="width: 200px;">
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-12">
+                <label>Image size:</label>
+                <select name="">
+                  {% for size in image_sizes %}
+                    <option value="{{size.0}}x{{size.1}}">{{size.0}}x{{size.1}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+
+          </div>
+
+
+        </form>
+      </div>
+
+      <div class="col-md-5">
+
+        {% if image %}
+          <div class="row horizontal-align">
+            <img src="{{image}}">
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="col-md-3">
+
+        {% if image_url %}
+          <div class="card card-block">
+            <h4 class="card-title">Link to image</h4>
+            <div class="md-form input-group">
+              <input type="search" class="form-control js-copytextarea" value="{{image_url}}">
+              <button class="btn btn-warning js-textareacopybtn" type="button">Copy to clipboard</button>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+    </div>
+
+
+</div><!-- /.container -->
+
+
+
+<script type="text/javascript">
+$( document ).ready(function() {
+
+  // Disables the chord name input if "Guess chord name" is checked
+  $('#chord_name')[0].disabled = $('#guess_chord_name')[0].checked;
+
+  $('#guess_chord_name').change(function() {
+      $('#chord_name')[0].disabled = $('#guess_chord_name')[0].checked;
+  });
+
+
+  // If a fret number changes
+  $('.fret').change(function() {
+
+    var finger_id = "#" + this.name + "_finger_form";
+
+    if (this.value != 0) {
+      $(finger_id).css('visibility', 'visible');
+    } else {
+      $(finger_id)[0].value = "";
+      $(finger_id).css('visibility', 'hidden');
+    };
+
+  }).change();
+
+  var copyTextareaBtn = document.querySelector('.js-textareacopybtn');
+
+  copyTextareaBtn.addEventListener('click', function(event) {
+    var copyTextarea = document.querySelector('.js-copytextarea');
+    copyTextarea.select();
+
+    try {
+      var successful = document.execCommand('copy');
+      var msg = successful ? 'successful' : 'unsuccessful';
+      console.log('Copying text command was ' + msg);
+    } catch (err) {
+      console.log('Oops, unable to copy');
+    }
+  });
+    
+});
+</script>
+
+
+{% endblock %}

@@ -1,0 +1,3 @@
+#!/bin/sh
+
+/opt/certbot/venv/bin/certbot renew --allow-subset-of-names -q --webroot -w /code/staticfiles >> /var/log/certbot-renew.log 2>&1

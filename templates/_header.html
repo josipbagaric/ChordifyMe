@@ -1,0 +1,49 @@
+{% load static %}
+{% load rest_framework %}
+
+<div class="navbar navbar-light bg-primary">
+  <div class="container">
+
+    <!--
+    <button class="navbar-toggler hidden-md-up float-xs-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation" id="navbarToggler"></button>
+    -->
+
+    <a class="navbar-brand" href="/">
+      <img src="{% static 'img/icons/chordify_transparent_128x128.png' %}" height="32px"> Chordify.me
+    </a>
+
+    <!--
+    <ul class="nav navbar-nav float-xs-right hidden-sm-down">
+      {% include "_header_links.html" %}
+    </ul>
+    -->
+
+  </div>
+</div>
+
+<!--
+<div class="collapse navbar-toggleable-md hidden-md-up" id="navbarResponsive">
+
+  <ul class="nav navbar-nav collapsible-navbar bg-inverse">
+    {% include "_header_links.html" %}
+  </ul>
+
+</div>
+-->
+
+<script>
+
+$.fn.scrollView = function () {
+    return this.each(function () {
+        $('html, body').animate({
+            scrollTop: $(this).offset().top
+        }, 200);
+    });
+}
+
+$(document).ready(function(){
+    $("#navbarToggler").click(function(){
+        $("#navbarResponsive").scrollView();
+    });
+});
+</script>

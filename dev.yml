@@ -1,0 +1,41 @@
+version: '2.1'
+
+services:
+  # Based on https://realpython.com/blog/python/django-development-with-docker-compose-and-machine/
+  chordifyme_postgis:
+    image: mdillon/postgis:9.6-alpine
+    volumes:
+      - chordifyme_data:/var/lib/postgresql/data
+      - ./logs/postgresql:/var/log/postgresql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "postgres"
+
+  chordifyme_redis:
+    image: redis:3.2.11-alpine
+    volumes:
+      - ./logs/redis:/var/log/redis
+
+  chordifyme_web:
+    build:
+      context: .
+      dockerfile: ./compose/django/dev/Dockerfile
+  #  command: gunicorn chordifyme.wsgi:application -w 4 -t 120 -e DJANGO_SETTINGS_MODULE=chordifyme.settings.production -b :8000
+    command: python3 manage.py runserver 0.0.0.0:8000 --settings=chordifyme.settings.local
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
+    depends_on:
+      - chordifyme_postgis
+      - chordifyme_redis
+    env_file: .env
+
+
+volumes:
+  chordifyme_data:
