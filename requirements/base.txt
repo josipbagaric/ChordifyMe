@@ -6,7 +6,7 @@ django-coreapi==2.3.0
 olefile==0.44
 
 # Images
-Pillow==3.4.2
+Pillow==9.0.0
 
 # Custom user with email
 django-authtools==1.6.0
